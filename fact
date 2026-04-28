@@ -1,0 +1,68 @@
+#include <stdio.h>
+#include <string.h>
+
+int main() {
+    char nt;
+    int n;
+    char prod[10][20];
+    char prefix[20] = "";
+    int max_len = 0;
+
+    printf("Enter Non-Terminal: ");
+    scanf(" %c", &nt);
+
+    printf("Enter number of productions: ");
+    scanf("%d", &n);
+
+    printf("Enter productions:\n");
+    for (int i = 0; i < n; i++) {
+        scanf("%s", prod[i]);
+    }
+
+    for (int i = 0; i < n; i++) {
+        for (int j = i + 1; j < n; j++) {
+            int len = 0;
+            while (prod[i][len] == prod[j][len] && prod[i][len] != '\0') {
+                len++;
+            }
+            if (len > max_len) {
+                max_len = len;
+                strncpy(prefix, prod[i], len);
+                prefix[len] = '\0';
+            }
+        }
+    }
+
+    if (max_len == 0) {
+        printf("\nNo Left Factoring needed.\n");
+        return 0;
+    }
+
+    printf("\nAfter Left Factoring:\n");
+
+    printf("%c -> %s%c'", nt, prefix, nt);
+    for (int i = 0; i < n; i++) {
+        if (strncmp(prod[i], prefix, max_len) != 0) {
+            printf(" | %s", prod[i]);
+        }
+    }
+    printf("\n");
+
+    printf("%c' -> ", nt);
+    int first = 1;
+    for (int i = 0; i < n; i++) {
+        if (strncmp(prod[i], prefix, max_len) == 0) {
+            if (!first) printf(" | ");
+            
+            if (strlen(prod[i]) == max_len) {
+                printf("ε");
+            } else {
+                printf("%s", prod[i] + max_len);
+            }
+            first = 0;
+        }
+    }
+    printf("\n");
+
+    return 0;
+}
